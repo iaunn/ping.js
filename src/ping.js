@@ -16,12 +16,15 @@ var Ping = function(opt) {
  * @param callback Callback function to trigger when completed. Returns error and ping value.
  * @param timeout Optional number of milliseconds to wait before aborting.
  */
-Ping.prototype.ping = function(source, callback) {
+Ping.prototype.ping = function(source, options, callback) {
     var self = this;
     self.wasSuccess = false;
     self.img = new Image();
     self.img.onload = onload;
     self.img.onerror = onerror;
+    options = options || {};
+    options.timeout = options.timeout || 0;
+    options.favicon = options.favicon || "/favicon.ico";
 
     var timer;
     var start = new Date();
@@ -36,10 +39,10 @@ Ping.prototype.ping = function(source, callback) {
         pingCheck.call(self, e);
     }
 
-    if (self.timeout) {
+    if (options.timeout) {
         timer = setTimeout(function() {
             pingCheck.call(self, undefined);
-    }, self.timeout); }
+    }, options.timeout); }
 
 
     /**
@@ -60,7 +63,7 @@ Ping.prototype.ping = function(source, callback) {
         }
     }
 
-    self.img.src = source + self.favicon + "?" + (+new Date()); // Trigger image load with cache buster
+    self.img.src = source + options.favicon + "?" + (+new Date()); // Trigger image load with cache buster
 };
 
 if (typeof exports !== "undefined") {
